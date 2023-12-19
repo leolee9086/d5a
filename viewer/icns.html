@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>ICNS Viewer</title>
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#viewer {
+			pointer-events: none;
+			object-fit: contain;
+			object-position: center;
+			width: 100%;
+			height: 100%;
+			max-width: 100vw;
+			max-height: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+	<img id="viewer" />
+	<script>
+		// 创建一个URLSearchParams对象，用于解析URL中的查询参数
+		const urlParams = new URLSearchParams(window.location.search);
+		// 从查询参数中获取文件路径
+		const filePath = urlParams.get('path');
+		// 从查询参数中获取宽度
+		const width = urlParams.get('width');
+		// 从查询参数中获取高度
+		const height = urlParams.get('height');
+		// 从查询参数中获取主题
+		const theme = urlParams.get('theme');
+		// 从查询参数中获取语言
+		const lang = urlParams.get('lang');
+
+		// 通过ID选择器获取HTML中的viewer元素
+		const viewer = document.querySelector('#viewer');
+
+		// 1. 首先加载缩略图
+		// 👍 避免加载时间过长，UI无内容
+		// 将文件路径中的".d5a"替换为"_thumbnail.png"，并设置为viewer的src
+		viewer.src = filePath.replace(".d5a", "_thumbnail.png");
+
+		// 2. 加载文件并替换缩略图
+		// 使用自执行的异步函数
+		(async function () {
+			// 引入AdmZip库，用于处理zip文件
+			const AdmZip = require('adm-zip');
+			// 引入fs库，用于文件系统操作
+			const fs = require('fs');
+
+			// 解压.d5a文件
+			let zip = new AdmZip(filePath);
+			// 获取zip文件中的所有条目
+			let zipEntries = zip.getEntries();
+
+			// 在zip条目中找到名为'icon.png'的文件
+			let iconEntry = zipEntries.find(entry => entry.entryName === 'icon.png');
+			// 如果没有找到'icon.png'，则在控制台输出错误信息并返回
+			if (!iconEntry) {
+				console.error(`icon.png not found in .d5a file.`);
+				return;
+			}
+
+			// 将'icon.png'文件提取到一个buffer中
+			let buffer = iconEntry.getData();
+
+			// 将buffer转换为base64格式
+			let base64 = `data:image/png;base64,${buffer.toString('base64')}`;
+
+			// 将viewer的src设置为base64字符串，即显示'icon.png'图片
+			viewer.src = base64;
+		})();	
+		</script>
+</body>
+
+</html>

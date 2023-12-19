@@ -1,0 +1,23 @@
+{
+    "id": "15045830-7222-47b0-90b5-67b8273dfa48",
+    "version": "1.0.0",
+    "platform": "all",
+    "arch": "all",
+    "name": "d5a",
+    "logo": "/logo.png",
+    "keywords": [
+        "icns"
+    ],
+    "devTools": false,
+    "preview": {
+        "d5a": {
+            "thumbnail": {
+                "path": "thumbnail/icns.js",
+                "size": 400
+            },
+            "viewer": {
+                "path": "viewer/icns.html"
+            }
+        }
+    }
+}
